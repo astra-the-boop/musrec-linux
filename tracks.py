@@ -40,9 +40,7 @@ def getPosition(service="spotify"):
     return interface.Get("org.mpris.MediaPlayer2.Player", "Position") / 1000000
 
 def setPlayerPos(position, service="spotify"):
-    player = getMprisPlayer(service)
-    interface = dbus.Interface(player,dbus_interface="org.mpris.MediaPlayer2.Player")
-    interface.SetPosition("/",int(position*1000000))
+    subprocess.run(["playerctl", "-p", service, "position", str(position)], check=True)
 
 def pause(service="spotify"):
     player=getMprisPlayer(service)
@@ -72,16 +70,6 @@ def isPlaying(service="spotify"):
     interface = dbus.Interface(player, dbus_interface="org.freedesktop.DBus.Properties")
     return interface.Get("org.mpris.MediaPlayer2.Player","PlaybackStatus") == "Playing"
 
-print(f"""
-{isPlaying("spotify")}
-{getAlbum("spotify")}
-{getPosition("spotify")}
-{getDuration("spotify")}
-{getTitle("spotify")}
-{getArtist("spotify")}
-""")
-
-bus = dbus.SessionBus()
-for name in bus.list_names():
-    if "mpris" in name.lower():
-        print(name)
+# play()
+setPlayerPos(0)
+#SHIT IS FUCKING BROKEN RN IDFK WHY I'LL FIX IT LATER LKSDALFMCKFDSA
