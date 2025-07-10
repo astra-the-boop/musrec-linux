@@ -35,4 +35,48 @@ def getDuration(service="spotify"):
                                                           #yk what else is micro? your d- unfunny sorry not sorry
 
 def getPosition(service="spotify"):
-    player = getMprisPlayer()
+    player = getMprisPlayer(service)
+    interface = dbus.Interface(player,dbus_interface="org.freedesktop.DBus.Properties")
+    return interface.Get("org.mpris.MediaPlayer2.Player", "Position") / 1000000
+
+def setPlayerPos(position, service="spotify"):
+    player = getMprisPlayer(service)
+    interface = dbus.Interface(player,dbus_interface="org.mpris.MediaPlayer2.Player")
+    interface.SetPosition("/",int(position*1000000))
+
+def pause(service="spotify"):
+    player=getMprisPlayer(service)
+    interface=dbus.Interface(player,dbus_interface="org.mpris.MediaPlayer2.Player")
+    interface.Pause()
+
+def play(service="spotify"):
+    player=getMprisPlayer(service)
+    interface = dbus.Interface(player,dbus_interface="org.mpris.MediaPlayer2.Player")
+    interface.Play()
+
+def getTitle(service="spotify"):
+    metadata = getMetadata(getMprisPlayer(service))
+    return str(metadata.get("xesam:title", ""))
+
+def getArtist(service="spotify"):
+    metadata = getMetadata(getMprisPlayer(service))
+    artist = metadata.get("xesam:artist", "")
+    return str(artist[0]) if artist else ""
+
+def getAlbum(service="spotify"):
+    metadata = getMetadata(getMprisPlayer(service))
+    return str(metadata.get("xesam:album",""))
+
+def isPlaying(service="spotify"):
+    player = getMprisPlayer(service)
+    interface = dbus.Interface(player, dbus_interface="org.freedesktop.DBus.Properties")
+    return interface.Get("org.mpris.MediaPlayer2.Player","PlaybackStatus") == "Playing"
+
+print(f"""
+{isPlaying()}
+{getAlbum()}
+{getPosition()}
+{getDuration()}
+{getTitle()}
+{getArtist()}
+""")
