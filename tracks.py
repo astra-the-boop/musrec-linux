@@ -21,7 +21,7 @@ def getMprisPlayer(service="spotify"):
     for services in bus.list_names():
         if service.lower() in services.lower() and services.startswith("org.mpris.MediaPlayer2."):
             return bus.get_object(services, "/org/mpris/MediaPlayer2")
-        raise RuntimeError(f"No MPRIS player found for {service}")
+    raise RuntimeError(f"No MPRIS player found for {service}")
 
 def getMetadata(player):
     interface = dbus.Interface(player,dbus_interface="org.freedesktop.DBus.Properties")
@@ -73,10 +73,15 @@ def isPlaying(service="spotify"):
     return interface.Get("org.mpris.MediaPlayer2.Player","PlaybackStatus") == "Playing"
 
 print(f"""
-{isPlaying()}
-{getAlbum()}
-{getPosition()}
-{getDuration()}
-{getTitle()}
-{getArtist()}
+{isPlaying("spotify")}
+{getAlbum("spotify")}
+{getPosition("spotify")}
+{getDuration("spotify")}
+{getTitle("spotify")}
+{getArtist("spotify")}
 """)
+
+bus = dbus.SessionBus()
+for name in bus.list_names():
+    if "mpris" in name.lower():
+        print(name)
