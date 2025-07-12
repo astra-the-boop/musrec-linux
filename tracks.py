@@ -75,11 +75,11 @@ def isPlaying(service="spotify"):
     return interface.Get("org.mpris.MediaPlayer2.Player","PlaybackStatus") == "Playing"
 
 def adLikely(service="spotify"):
-    if getTitle(service).strip() == "" or getArtist(service).strip() = "":
+    if getTitle(service).strip() == "" or getArtist(service).strip() == "":
         return True
     elif getTitle(service).strip() == "" and getArtist(service).strip().lower() in ["advertisement", "spotify"] or getArtist(service).strip().lower() in ["advertisement", 'spotify']:
         return True
-    elif getAlbum(service).strip() == "" and getTitle(service).strip() ==  and getDuration() <= 30:
+    elif getAlbum(service).strip() == "" and getTitle(service).strip() == "" and getDuration() <= 30:
         return True
     else:
         return False

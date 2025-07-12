@@ -43,11 +43,7 @@ def recorder(track_count,
             sys.exit(1) if input(
                 "Missing: ffmpeg; ffmpeg is required for .mp3, .flac, .ogg exports\n\nPlease install it via Homebrew:\nbrew install ffmpeg\n\nEnter [c] to cancel; enter anything else to proceed") == "c" else None
 
-    device_index = check_blackhole()
 
-
-
-    print(f"Using device index: {device_index}")
 
     print(sd.query_devices())
 
@@ -77,7 +73,6 @@ def recorder(track_count,
                             channels=channels,
                             callback=callback,
                             blocksize=blocksize,
-                            device=device_index,
                             dtype='float32'):
             start_time = time()
             pbar = tqdm(total=int(duration), desc=f"{title} — {artist}", unit="sec")
@@ -230,3 +225,5 @@ def recorder(track_count,
             os.remove("cover.jpg")
         except FileNotFoundError:
             pass
+
+recorder(1)
