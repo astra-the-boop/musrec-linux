@@ -1,8 +1,7 @@
 import requests
 import subprocess
 import dbus
-import re
-import shutil
+import os
 
 def fetchAlbumCover(title, artist, album, saveAs="cover.jpg"):
     query = f"{title} {artist} {album}".replace(" ","+")
@@ -40,6 +39,13 @@ def getPosition(service="spotify"):
     interface = dbus.Interface(player,dbus_interface="org.freedesktop.DBus.Properties")
     return interface.Get("org.mpris.MediaPlayer2.Player", "Position") / 1000000
 
+def setPlayerPos(position, service="spotify"):
+    #remove the if when deploy for prod
+    if os.environ.get("FLATPAK_ID"):
+        subprocess.run(["flatpak-spawn", "--host", "playerctl", "-p", service, "position", str(position)], check=True)
+    else:
+        subprocess.run(["playerctl", "-p", service, "position", str(position)], check=True)
+
 def pause(service="spotify"):
     player=getMprisPlayer(service)
     interface=dbus.Interface(player,dbus_interface="org.mpris.MediaPlayer2.Player")
@@ -68,4 +74,4 @@ def isPlaying(service="spotify"):
     interface = dbus.Interface(player, dbus_interface="org.freedesktop.DBus.Properties")
     return interface.Get("org.mpris.MediaPlayer2.Player","PlaybackStatus") == "Playing"
 
-# play()
+setPlayerPos(0)
